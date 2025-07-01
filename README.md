@@ -27,7 +27,7 @@ Bu proje, bir itfaiye aracının uzaktan kontrolünü sağlayan akıllı bir sis
 
 ---
 
-# IoT-Based Smart Fire Truck Controlled via Web Interface and Communicating with MQTT 🚒
+# IoT-Based Smart Fire Truck Controlled via Web Interface and Communicating with MQTT 
 
 This project is an IoT-based smart fire truck system that enables remote control through a web interface. The user can steer the vehicle, activate the siren and water pump, view sensor data in real-time, and watch a live camera stream. The system communicates with a Raspberry Pi via the MQTT protocol.
 
