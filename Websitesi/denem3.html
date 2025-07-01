@@ -1,0 +1,498 @@
+
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>210208020-Bitirme Çalışması</title>
+	<script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+	
+<style>
+	
+	.hidden,.hiddensag,.hiddensag2,.hiddensol,.hidden {visibility: hidden;}
+	button{border-radius: 10px 10px; border-style: solid ; border-color: black; padding: 10px; border: 1; cursor:pointer;}
+	.engenel{height: 500px;}
+	.genel{display: flex;flex-wrap: wrap;}
+	.header{height: 60px; width: 99.7% ;background: linear-gradient(to left,#df1b1b,#ba3030) ;align-content: center;margin: 0px 0px;text-align: center; border-radius: 10px 10px; box-shadow: -1px 1px 5px 3px black;}
+	.hidden{height: 5px;width: 100%; background: transparent;}
+	.kontrol{height: 500px; width: 20%;margin: 0px 0px; background-color: #A45A52; margin-top: 0px; border-radius: 10px 10px; box-shadow: 1px 1px 5px 3px black;flex-shrink: 0;}
+	.hiddensol{height: 500px; width: 10px;margin:0px 0px;background: brown;visibility: hidden}
+	.resim{background: red;height: 500px;width: 58%;backface-visibility: hidden; border-radius: 10px 10px;box-shadow: 1px 1px 5px 3px black;display: flex;}
+	.hiddensag{height: 500px; width: 10px;background: #012536;margin: 0px 0px;visibility: hidden;}
+	.suseviye{height: 500px;width: 5%;background: #A45A52;margin: 0px 0px;display: flex;flex-direction: column-reverse;align-items: center;border-radius: 10px 10px; box-shadow: 1px 1px 5px 3px black;}
+	.seviyemavi{width: 100%;height: 0%; background: #75C5FF;transition: height 0.5s ease-in-out; border-radius: 10px 10px; box-shadow: -1px -1px 5px 3px black;}
+	.suseviyemetin{position: absolute;width: 100%;text-align: center;font-weight: 700;color: black; text-shadow: 1px 0px 1px brown }
+	.hiddensag2{height: 500px; width: 10px;background: #012536;margin: 0px 0px;visibility: hidden;}
+	.veriler{height: 500px; width:15%;background: #A45A52; color: white; border-radius: 10px 10px; border-radius: 10px 10px; box-shadow: 1px 1px 5px 3px black;}
+	.tablokontrol{height: 20%;height: 30%; color: black; background-color: transparent; align-content: center;margin-top: 55px;}
+	.hiddenbutton{visibility: hidden; background-color: transparent;}
+	.buttonin{background-color: red; height: 100px; width: 100px; box-shadow: 1px 1px 5px 1px black;}
+	.kontrolbuton{background-color: transparent; width: 100px; height: 75px; box-shadow: 1px 1px 5px 1px black;}
+	.kontrolbutonhidden{background-color: transparent;visibility: hidden;}
+	.asagi{height: 50px;width: 60%; align-content:center; margin: 0px auto; text-align: center;text-decoration: underline;text-decoration-style: wavy;text-shadow: 10px;font-weight: 900;font-family: Consolas, "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", Monaco, "Courier New", "monospace";font-size: 36px;border: thick; border-color: black;}
+	.itfaiye_yazisi{text-shadow: 3px 3px 6px black;}
+	.video{border-radius: 10px 10px; box-shadow: 1px 1px 5px 3px black;}
+	#console{width: 97%;height: 78%;background-color:transparent;color:black;border: 0px solid black;border-radius: 10px 10px;overflow: auto;box-shadow: 0px -4px 2px rgba(0, 0, 0, 0.5);padding-left: 10px;}
+	#console::-webkit-scrollbar {width: 10px;}
+	.hiddenalt{width: 100%; background: transparent;visibility: hidden;}
+	.sukontrol{height: 100px; width: 20%;background-color: #A45A52;border-radius: 10px 10px; box-shadow: 1px 1px 5px 3px black;flex-shrink: 0;text-align: center;display:inline-block;margin-top: 10px;}
+	.servoyazilar{width: 100%;display: block;color: black;}
+	.servoderece{display: block;margin: 0px auto;}
+	input[type=range] {-webkit-appearance: none;width: 80%;height: 12px;border-radius: 6px;background: linear-gradient(to right, #FA8072, #EE4B2B,#FA8072);outline: none;}
+	input[type=range]::-webkit-slider-thumb {-webkit-appearance: none;appearance: none;width: 24px;height: 24px;border-radius: 50%;background: #fff;border: 3px solid #722F37; cursor: pointer;transition: background 0.3s ease;}
+    input[type=range]::-moz-range-thumb {width: 24px;height: 24px;border-radius: 50%;background: #fff;border: 3px solid #4facfe;cursor: pointer;}
+    .value-display {font-size: 20px;font-weight: bold;color:black ;text-shadow: 1px 1px 5px white;}
+	.resim iframe{border: none;}
+	.flame{height: 600px; width: 58%;background-color: wheat;border-radius: 10px 10px; box-shadow: 1px 1px 5px 3px black;flex-shrink: 0;margin-top: 10px;justify-content: center;display: flex;align-items: center;}
+	.altcontainer{display: flex;align-items: flex-start;gap: 10px;}
+	.flame araba{display:inherit;max-width: 100%;max-height: 100%;}
+	.itfaiyeflame td{width: 33%; height:33%;}
+	#flamegeri , #flameon , #flamesag , #flamesol {visibility: hidden;}
+	body {
+    overflow-x: hidden; /* Sağdaki kaydırma ve boşluk sorununu çözer */
+    margin: 0;
+    padding: 0;
+	}
+	.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 10px;
+    box-sizing: border-box;
+	}
+	
+
+</style>
+</head>
+
+<body bgcolor="#7E453F" class="body">
+<div class="engenel">
+<div class="header"><font color="white" face="nasalization" size="+3" class="itfaiye_yazisi">İTFAİYE ARACI KONTROL İSTASYONU</font></div>
+<div class="hidden"></div>
+<div class="genel">
+<div class="kontrol">
+	<div class="button">
+	<table class="tablokontrol" align="center">
+		<tr><td class="hiddenbutton"></td><td><button class="buttonin" id="buttonid1"><font size="+1">^</font></button></td><td class="hiddenbutton"></td></tr>
+		<tr><td><button class="buttonin" id="buttonid2" ><</button></td><td class="hiddenbutton"></td><td><button class="buttonin" id="buttonid3" >></button></td></tr>
+		<tr><td class="hiddenbutton"></td><td><button class="buttonin" id="buttonid4"><font size="-2">V</font></button></td><td class="hiddenbutton"></td></tr>
+		<tr><td class="hiddenbutton"></td><td><button class="hiddenbutton"></button></td><td class="hiddenbutton"></td></tr>
+		<tr><td ><button class="kontrolbuton" id="buttonid5" onClick="buttonrenk5()">Siren</button></td><td><button class="kontrolbutonhidden"></button></td><td><button class="kontrolbuton" id="buttonid6" onClick="buttonrenk6()">Su Püskürt</button></td></tr>
+		
+		</table></div>
+	</div>
+<div class="hiddensol"></div> 
+<div class="resim">
+	<iframe width="100%" height="100%" src="http://178.208.187.184:8080/embed/video?autoplay=1" frameborder="0" allow="autoplay; " class="video"></iframe>
+
+       </div>
+<div class="hiddensag"></div>
+<div class="suseviye">
+	<div class="suseviyemetin">%0</div>
+	<div class="seviyemavi"></div>
+</div>
+<div class="hiddensag2"></div>
+<div class="veriler">
+	<h2 id="status">Durum: Bağlanıyor...</h2>
+    <h3>Giden Veri: <span id="sensorVerisi">Bekleniyor</span></h3>
+	<div id="console">I........................................ I<br>I Veriler buraya gelecek... I<br>V...................................... V</div>
+	<script>
+    // MQTT Broker bağlantısı ve abone olunacak topic'ler
+    const MQTT_BROKER = 'ws://178.208.187.184:9001';
+
+    const MQTT_TOPICS = ['sensor/veri', 'ileri/veri','sol/veri','sag/veri','geri/veri','siren/veri','pompa/veri','servo/veri','flame/veri','su/veri'];
+
+    // MQTT Client bağlantısını oluştur
+    const client = mqtt.connect(MQTT_BROKER);
+
+    // Bağlantı başarılı olduğunda
+    client.on('connect', () => {
+        console.log("MQTT'ye bağlandı!");
+        let statusElement = document.getElementById("status");
+        statusElement.innerText = "Status: Bağlandı";
+        statusElement.style.textShadow = "2px 2px 4px rgba(0, 0, 0, 0.5)";
+        statusElement.style.color = "lightgreen"; // Yeşil renk yap
+        
+        // Birden fazla topic'e abone ol
+        MQTT_TOPICS.forEach(topic => {
+            client.subscribe(topic, (err) => {
+                if (err) {
+                    console.log(`Topic aboneliği başarısız: ${topic}`);
+                } else {
+                    console.log(`Topic'e abone olundu: ${topic}`);
+                }
+            });
+        });
+    });
+
+    // Mesaj alındığında
+    client.on('message', (topic, message) => {
+        const veri = message.toString();
+        console.log("Gelen Veri:", veri);
+
+        // Topic
+        if (topic === 'sensor/veri') {
+            console.log("Sensör Verisi:", veri);
+            document.getElementById("sensorVerisi").innerText = `${parseFloat(veri).toFixed(2)} °C`;
+        } else if (topic === 'ileri/veri') {
+            console.log("İleri/Veri:", veri);
+        } else if (topic === 'sol/veri') {
+            console.log("Sol/Veri:", veri);
+        } else if (topic === 'sag/veri') {
+            console.log("Sağ/Veri:", veri);
+        } else if (topic === 'geri/veri') {
+            console.log("Geri/Veri:", veri);
+        }
+		else if (topic === 'su/veri') {
+			const suSeviyesi = Math.min(Math.max(parseInt(veri), 0), 100); // 0-100 aralığı
+			const maviDiv = document.querySelector('.seviyemavi');
+			const metinDiv = document.querySelector('.suseviyemetin');
+
+			maviDiv.style.height = suSeviyesi + '%'; 
+			metinDiv.innerText = `%${suSeviyesi}`; 
+		}
+		
+			///////
+			let consoleDiv = document.getElementById("console");
+			let newMessage = document.createElement("div");
+			newMessage.innerText = `${topic}: ${veri}`;
+			consoleDiv.appendChild(newMessage);
+			consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    });
+
+
+    client.on('error', (error) => {
+        console.error("MQTT Hatası:", error);
+        document.getElementById("status").innerText = "Status: Bağlantı Hatası";
+    });
+
+    //İLERİ
+    document.getElementById("buttonid1").addEventListener("mousedown", function() {
+        // MQTT'ye '1' gönder
+        client.publish('ileri/veri', '1');
+        console.log("İleri/Veri: 1 gönderildi");
+		
+		let consoleDiv = document.getElementById("console");
+				let newMessage = document.createElement("div");
+				//newMessage.innerText = "Kontrol: İleri";
+				consoleDiv.appendChild(newMessage);
+				consoleDiv.scrollTop = consoleDiv.scrollHeight; 
+
+        
+       document.getElementById("sensorVerisi").innerText = "İleri";
+    });
+    document.getElementById("buttonid1").addEventListener("mouseup", function() {
+        // MQTT'ye '0' gönder
+        client.publish('ileri/veri', '0');
+        console.log("İleri/Veri: 0 gönderildi");
+		let consoleDiv = document.getElementById("console");
+				let newMessage = document.createElement("div");
+				consoleDiv.appendChild(newMessage);
+				consoleDiv.scrollTop = consoleDiv.scrollHeight;
+
+        // Veriler div'ini eski haline döndür
+        document.getElementById("sensorVerisi").innerText = "Bekleniyor";
+    });
+		
+		
+		
+		
+		//SOL
+	document.getElementById("buttonid2").addEventListener("mousedown", function() {
+        // MQTT'ye '1' gönder
+        client.publish('sol/veri', '1');
+        console.log("Sol/Veri: 1 gönderildi");
+		
+		let consoleDiv = document.getElementById("console");
+				let newMessage = document.createElement("div");
+				//newMessage.innerText = "Kontrol: İleri";
+				consoleDiv.appendChild(newMessage);
+				consoleDiv.scrollTop = consoleDiv.scrollHeight; 
+
+        // Veriler div'inde "İleri" yazısını göster
+       document.getElementById("sensorVerisi").innerText = "Sol";
+    });
+    // buttonid1 tuşu bırakıldığında MQTT ile '0' gönder ve veriler div'ini temizle
+    document.getElementById("buttonid2").addEventListener("mouseup", function() {
+        // MQTT'ye '0' gönder
+        client.publish('sol/veri', '0');
+        console.log("Sol/Veri: 0 gönderildi");
+		let consoleDiv = document.getElementById("console");
+				let newMessage = document.createElement("div");
+				consoleDiv.appendChild(newMessage);
+				consoleDiv.scrollTop = consoleDiv.scrollHeight;
+
+        // Veriler div'ini eski haline döndür
+        document.getElementById("sensorVerisi").innerText = "Bekleniyor";
+    });
+		
+		
+		
+		//SAĞ
+	document.getElementById("buttonid3").addEventListener("mousedown", function() {
+        // MQTT'ye '1' gönder
+        client.publish('sag/veri', '1');
+        console.log("Sağ/Veri: 1 gönderildi");
+		
+		let consoleDiv = document.getElementById("console");
+				let newMessage = document.createElement("div");
+				//newMessage.innerText = "Kontrol: İleri";
+				consoleDiv.appendChild(newMessage);
+				consoleDiv.scrollTop = consoleDiv.scrollHeight; 
+
+        // Veriler div'inde "İleri" yazısını göster
+       document.getElementById("sensorVerisi").innerText = "Sağ";
+    });
+    // buttonid1 tuşu bırakıldığında MQTT ile '0' gönder ve veriler div'ini temizle
+    document.getElementById("buttonid3").addEventListener("mouseup", function() {
+        // MQTT'ye '0' gönder
+        client.publish('sag/veri', '0');
+        console.log("Sağ/Veri: 0 gönderildi");
+		let consoleDiv = document.getElementById("console");
+				let newMessage = document.createElement("div");
+				consoleDiv.appendChild(newMessage);
+				consoleDiv.scrollTop = consoleDiv.scrollHeight;
+
+        // Veriler div'ini eski haline döndür
+        document.getElementById("sensorVerisi").innerText = "Bekleniyor";
+    });
+		
+		
+		
+		
+		//GERİ
+	document.getElementById("buttonid4").addEventListener("mousedown", function() {
+        // MQTT'ye '1' gönder
+        client.publish('geri/veri', '1');
+        console.log("Geri/Veri: 1 gönderildi");
+		
+		let consoleDiv = document.getElementById("console");
+				let newMessage = document.createElement("div");
+				//newMessage.innerText = "Kontrol: İleri";
+				consoleDiv.appendChild(newMessage);
+				consoleDiv.scrollTop = consoleDiv.scrollHeight; 
+
+        // Veriler div'inde "İleri" yazısını göster
+       document.getElementById("sensorVerisi").innerText = "Geri";
+    });
+    // buttonid1 tuşu bırakıldığında MQTT ile '0' gönder ve veriler div'ini temizle
+    document.getElementById("buttonid4").addEventListener("mouseup", function() {
+        // MQTT'ye '0' gönder
+        client.publish('geri/veri', '0');
+        console.log("Geri/Veri: 0 gönderildi");
+		let consoleDiv = document.getElementById("console");
+				let newMessage = document.createElement("div");
+				consoleDiv.appendChild(newMessage);
+				consoleDiv.scrollTop = consoleDiv.scrollHeight;
+
+        // Veriler div'ini eski haline döndür
+        document.getElementById("sensorVerisi").innerText = "Bekleniyor";
+    });
+		
+		
+		
+		
+		//SİREN
+	let sirenAcik = false; 
+
+document.getElementById("buttonid5").addEventListener("click", function() {
+    if (sirenAcik) {
+        client.publish('siren/veri', '0');
+        console.log("Siren/Veri: 0 gönderildi");
+        document.getElementById("sensorVerisi").innerText = "Bekleniyor";
+    } else {
+        client.publish('siren/veri', '1');
+        console.log("Siren/Veri: 1 gönderildi");
+        document.getElementById("sensorVerisi").innerText = "Siren AÇIK";
+    }
+    sirenAcik = !sirenAcik;
+});
+		
+		
+		
+		
+		
+		//POMPA
+let pompaAcik = false; 
+
+document.getElementById("buttonid6").addEventListener("click", function() {
+    if (pompaAcik) {
+        // Pompa kapalı
+        client.publish('pompa/veri', '0');
+        	console.log("Pompa/Veri: 0 gönderildi");
+        document.getElementById("sensorVerisi").innerText = "Bekleniyor";
+    } else {
+        // Pompa açık
+        client.publish('pompa/veri', '1');
+        console.log("Pompa/Veri: 1 gönderildi");
+        document.getElementById("sensorVerisi").innerText = "Pompa AÇIK";
+    }
+    
+    // Durumu değiştir
+    pompaAcik = !pompaAcik;
+});
+
+</script>
+
+
+	</div>
+</div>
+<div class="hiddenalt"></div>
+<div class="altcontainer">
+<div class="sukontrol">
+	<div class="servoyazilar"><h2>Servo Derece: <span class="value-display" id="degree">90</span>°</h2></div>
+    <div class="servoderece"><input type="range" id="servoSlider" min="0" max="180" value="90"></div></div>
+<div class="flame" >
+	<table class="itfaiyeflame" align="center"height="100%" width="600px">
+		<tr><td class="hiddenbutton"></td><td id="flameon" align="center"><img src="../../../../Documents/Adlandırılmamış Site 2/flame.png" width="50%" height="50%"></td><td class="hiddenbutton"></td></tr>
+		<tr><td id="flamesol" align="center"><img src="flame.png"  width="50%" height="50%"></td><td align="center"><img src="../../../../Documents/Adlandırılmamış Site 2/itfaiyepov.png" class="araba" height="200px" width="110px"></td><td id="flamesag" align="center"><img src="flame.png"  width="50%" height="50%"></td></tr>
+		<tr><td class="hiddenbutton"></td><td id="flamegeri" align="center"><img src="flame.png"  width="50%" height="50%"></td><td class="hiddenbutton"></td></tr>
+	
+	
+	<script>
+	client.on('message', (topic, message) => {
+    const veri = message.toString();  // Veriyi alıyoruz ve string'e çeviriyoruz
+    console.log("Gelen Veri:", veri);  // Veriyi konsola yazdırarak kontrol edelim
+
+    // flame/veri topic'inden gelen veriyi kontrol et
+    if (topic === 'flame/veri') {
+        console.log("Flame Verisi:", veri);  // Gelen veriyi konsola yazdırıyoruz
+
+        // Gelen veri ile ilgili işlemi yapıyoruz
+        if (veri === "^") {
+            document.getElementById('flameon').style.visibility = 'visible';
+            document.getElementById('flamesol').style.visibility = 'hidden';
+            document.getElementById('flamesag').style.visibility = 'hidden';
+            document.getElementById('flamegeri').style.visibility = 'hidden';
+        }
+        else if (veri === "<") {
+            document.getElementById('flamesol').style.visibility = 'visible';
+            document.getElementById('flameon').style.visibility = 'hidden';
+            document.getElementById('flamesag').style.visibility = 'hidden';
+            document.getElementById('flamegeri').style.visibility = 'hidden';
+        }
+        else if (veri === ">") {
+            document.getElementById('flamesag').style.visibility = 'visible';
+            document.getElementById('flameon').style.visibility = 'hidden';
+            document.getElementById('flamesol').style.visibility = 'hidden';
+            document.getElementById('flamegeri').style.visibility = 'hidden';
+        }
+        else if (veri === "V") {
+            document.getElementById('flamegeri').style.visibility = 'visible';
+            document.getElementById('flameon').style.visibility = 'hidden';
+            document.getElementById('flamesol').style.visibility = 'hidden';
+            document.getElementById('flamesag').style.visibility = 'hidden';
+        }
+		else if (veri === "-") {
+            document.getElementById('flamegeri').style.visibility = 'hidden';
+            document.getElementById('flameon').style.visibility = 'hidden';
+            document.getElementById('flamesol').style.visibility = 'hidden';
+            document.getElementById('flamesag').style.visibility = 'hidden';
+        }
+    }
+});
+
+	</script></div></div>
+	
+	
+	
+	
+
+	
+	<script>
+	var tiksayi = 1;
+	var interval;
+	var motorac = 1;
+		function buttonrenk1(){
+		var butoncolor = document.getElementById("buttonid1");
+			butoncolor.addEventListener("mousedown", function() {
+				butoncolor.style.backgroundColor = "blue";});
+			butoncolor.addEventListener("mouseup", function() {
+				butoncolor.style.backgroundColor = "red";});
+			butoncolor.addEventListener("mouseleave", function() {
+				butoncolor.style.backgroundColor = "red";});
+	}
+
+	function buttonrenk2(){
+		var butoncolor = document.getElementById("buttonid2");
+		butoncolor.addEventListener("mousedown", function() {
+			butoncolor.style.backgroundColor = "blue";});
+		butoncolor.addEventListener("mouseup", function() {
+			butoncolor.style.backgroundColor = "red";});
+		butoncolor.addEventListener("mouseleave", function() {
+			butoncolor.style.backgroundColor = "red";});
+	}
+
+	function buttonrenk3(){
+		var butoncolor = document.getElementById("buttonid3");
+		butoncolor.addEventListener("mousedown", function() {
+			butoncolor.style.backgroundColor = "blue";});
+		butoncolor.addEventListener("mouseup", function() {
+			butoncolor.style.backgroundColor = "red";});
+		butoncolor.addEventListener("mouseleave", function() {
+			butoncolor.style.backgroundColor = "red";});
+	}
+
+	function buttonrenk4(){
+		var butoncolor = document.getElementById("buttonid4");
+		butoncolor.addEventListener("mousedown", function() {
+			butoncolor.style.backgroundColor = "blue";});
+		butoncolor.addEventListener("mouseup", function() {
+			butoncolor.style.backgroundColor = "red";});
+		butoncolor.addEventListener("mouseleave", function() {
+			butoncolor.style.backgroundColor = "red";});
+	}
+
+	function buttonrenk5(){
+		tiksayi++;
+		var butoncolor = document.getElementById("buttonid5");
+		if(tiksayi%2==0){
+			var cakar = false;
+			interval = setInterval(function() {
+				cakar = !cakar;
+				butoncolor.style.backgroundColor = cakar ? "red" : "blue";
+			},200);
+		}
+		else{clearInterval(interval);
+			butoncolor.style.backgroundColor="transparent";}
+	}
+	function buttonrenk6(){
+		motorac++;
+		var butoncolor = document.getElementById("buttonid6");
+		if(motorac%2==0){butoncolor.style.backgroundColor = "red";}
+		else{butoncolor.style.backgroundColor="transparent";}
+	}
+		
+		
+		
+	document.addEventListener("DOMContentLoaded", function() {
+    buttonrenk1();
+    buttonrenk2();
+    buttonrenk3();
+    buttonrenk4();
+});
+		
+	</script>
+	
+	
+	 <script>
+    const slider = document.getElementById('servoSlider');
+  const degreeDisplay = document.getElementById('degree');
+
+  slider.addEventListener('input', () => {
+    const value = slider.value;
+    degreeDisplay.textContent = value;
+
+    // MQTT'ye veriyi gönder (örnek topic: 'servo/veri')
+    client.publish('servo/veri', value.toString());
+    console.log("Servo/veri gönderildi:", value);
+
+    // Giden veriyi göster
+    document.getElementById("sensorVerisi").innerText = `Servo: ${value}`;
+  });
+  </script>
+
+    
+	
+</div>
+</body>
+</html>

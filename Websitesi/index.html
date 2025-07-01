@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>itfaiyewebdeneme3</title>
+<style>
+	.engenel{height: 500px;}
+	.genel{display: flex;}
+	.header{height: 60px; width: 100% ;background: black;align-content: center;margin: 0px auto;text-align: center;}
+	.hidden{height: 2px;width: 100%; background: yellow;}
+	.kontrol{height: 500px; width: 20%;margin: 0px 0px; background: orange; margin-top: 0px;}
+	.hiddensol{height: 500px; width: 10px;margin:0px 0px;background: brown;}
+	.resim{background: red;height: 500px;width: 60%;backface-visibility: hidden;}
+	.hiddensag{height: 500px; width: 10px;background: #012536;margin: 0px 0px;}
+	.suseviye{height: 500px;width: 10%;background: #8F8E8;margin: 0px 0px;display: flex;flex-direction: column-reverse;align-items: center;}
+	.seviyemavi{width: 100%;height: 0%; background: #75C5FF;transition: height 0.5s ease-in-out;}
+	.suseviyemetin{position: absolute;width: 100%;text-align: center;font-weight: 700;color: black;}
+	.hiddensag2{height: 500px; width: 10px;background: #012536;margin: 0px 0px;}
+	.veriler{height: 500px; width:15%;background: #00FF15;}
+	</style>
+</head>
+
+<body>
+<div class="engenel">
+<div class="header"><font color="white";>HALİL İBRAHİM ÇETİN</font></div>
+<div class="hidden"></div>
+<div class="genel">
+<div class="kontrol"></div>
+<div class="hiddensol"></div>
+<div class="resim"><img src="/var/www/html/bg.jpg" height="100%" width="100%"></div>
+<div class="hiddensag"></div>
+<div class="suseviye">
+	<div class="suseviyemetin">%0</div>
+	<div class="seviyemavi"></div>
+</div>
+<div class="hiddensag2"></div>
+<div class="veriler"></div>
+</div>
+</div>
+	
+	
+<script>
+	function suseviyesiayarla(su_veri){
+		if (su_veri <0) su_veri = 0;
+		if (su_veri >100) su_veri = 100;
+		
+		const seviyeDiv = document.querySelector(".seviyemavi");
+        const seviyeMetin = document.querySelector(".suseviyemetin");
+		
+		seviyeDiv.style.height = su_veri + "%";
+        seviyeMetin.textContent = su_veri + "%";
+        seviyeMetin.style.bottom = su_veri + "%";
+		
+	}
+	
+	let testsu= 0;
+	setInterval(() => {
+        testsu = (testsu + 10) % 110; // 0'dan 100'e gidip başa döner
+        suseviyesiayarla(testsu);
+    }, 1000);
+	</script>
+</body>
+</html>

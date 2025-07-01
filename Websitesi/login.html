@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Girişi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-image:linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url("itfaiyeresim.png");
+            margin: 0;
+			background-size: contain;
+			background-position: center; 
+			background-repeat: no-repeat; 
+			background-color: black; 
+			height: 100vh; 
+        }
+        .login-container {
+            background-color: #AA6E6F;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            width: 300px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 97%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+		.yazi{
+			text-shadow: 0.1px 0.2px 3px white;
+			font-size: 25px;
+			text-align: center;
+			vertical-align: center;
+			text-align-last: center;
+			alignment-baseline: center;
+		}
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <h2><font face="nasalization" class="yazi">İTFAİYE KONTROL İSTASYONU</font></h2>
+
+        <div id="error-message" class="error" style="display:none;">Yanlış kullanıcı adı veya şifre!</div>
+
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Kullanıcı Adı" required><br>
+            <input type="password" id="password" placeholder="Şifre" required><br>
+            <button type="submit">Giriş Yap</button>
+        </form>
+    </div>
+
+    <script>
+        const correctUsername = 'admin'; // Doğru kullanıcı adı
+        const correctPassword = '112233'; // Doğru şifre
+
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('error-message');
+
+        loginForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Formun sayfayı yenilemesini engeller
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (username === correctUsername && password === correctPassword) {
+                window.location.href = 'index.html'; // Giriş başarılı ise yönlendir
+            } else {
+                errorMessage.style.display = 'block'; // Hata mesajını göster
+            }
+        });
+    </script>
+
+</body>
+</html>
