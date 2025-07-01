@@ -1,4 +1,4 @@
-# Nesnelerin İnterneti Tabanlı Web Arayüzü Kontrollü MQTT ile Haberleşen Akıllı İtfaiye Aracı 🚒
+# Nesnelerin İnterneti Tabanlı Web Arayüzü Kontrollü MQTT ile Haberleşen Akıllı İtfaiye Aracı
 
 Bu proje, bir itfaiye aracının uzaktan kontrolünü sağlayan akıllı bir sistemdir. Web arayüzü üzerinden kullanıcı; aracı yönlendirebilir, sireni ve su pompasını kontrol edebilir, sensör verilerini canlı olarak izleyebilir ve kamera görüntüsünü anlık görebilir. Sistem, MQTT protokolü üzerinden Raspberry Pi ile iletişim kurar.
 
