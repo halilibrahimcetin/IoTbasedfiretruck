@@ -1,71 +1,60 @@
-import tkinter as tk
-from gpiozero import Servo
-import paho.mqtt.client as mqtt
-from gpiozero import LED
+import threading
 import time
+import paho.mqtt.client as mqtt
+from gpiozero import Servo, LED
 import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
-import threading
-from gpiozero import PWMOutputDevice
-import RPi.GPIO as GPIO
 from flask import Flask, Response, render_template_string
+from picamera2 import Picamera2
+import cv2
 
 
+# --- Donanım ve sensör kurulumu ---
 i2c = busio.I2C(board.SCL, board.SDA)
 ads = ADS.ADS1115(i2c)
-ads2 = ADS.ADS1115(i2c , address=0x49)
+ads2 = ADS.ADS1115(i2c, address=0x49)
 
-# Servo kurulumu (GPIO 12)
+
 servo = Servo(12, min_pulse_width=0.70/1000, max_pulse_width=2.5/1000)
-#servo=LED(12)
-sag_ileri=LED(19)
-sag_geri=LED(26)
-sol_ileri=LED(20)
-sol_geri=LED(21)
-sirenkirmizi=LED(17)
-sirenmavi=LED(27)
-sirenbeyaz=LED(22)
-horn=LED(6)
-pompa=LED(13)
-
-
-
-
+sag_ileri = LED(19)
+sag_geri = LED(26)
+sol_ileri = LED(20)
+sol_geri = LED(21)
+sirenkirmizi = LED(17)
+sirenmavi = LED(27)
+sirenbeyaz = LED(22)
+horn = LED(6)
+pompa = LED(13)
 
 
 def set_servo_angle(angle):
     angle = max(0, min(180, int(angle)))
-    servo.value = (angle / 90) - 1
-    print(f"Servo açısı : {angle}")
-    try:
-        scale.set(angle)
-    except:
-        pass
+    servo.value =(angle / 90) - 1
+    print(f"Servo açısı: {angle}")
 
-# MQTT
-MQTT_BROKER = "178.208.187.184"
+
+MQTT_BROKER = "VPS_IP"
 MQTT_TOPICS = [("servo/veri", 0), ("ileri/veri", 0), ("sag/veri", 0),
-               ("sol/veri", 0), ("geri/veri", 0), ("siren/veri", 0), ("pompa/veri", 0),("flame/veri",0),("su/veri",0)]
+               ("sol/veri", 0), ("geri/veri", 0), ("siren/veri", 0), ("pompa/veri", 0), ("flame/veri", 0), ("su/veri", 0)]
 
 def on_connect(client, userdata, flags, rc):
-    print("MQTT Baglantı durumu:", rc+1)
+    print("MQTT Bağlantı durumu:", 1-rc)
     client.subscribe(MQTT_TOPICS)
 
 def on_message(client, userdata, msg):
     topic = msg.topic
     payload = msg.payload.decode()
-
-    ##print(f"Gelen mesaj -> Topic: {topic}, Veri: {payload}")
+    # Burada senin mevcut mesaj işleme fonksiyonun olabilir
+    # Örneğin servo, led kontrol kodları buraya...
 
     if topic == "servo/veri":
         try:
             derece = float(payload)
             set_servo_angle(derece)
-        except ValueError:
-            print("Geçersiz servo verisi:", payload)
-
+        except:
+            pass
     if topic == "sag/veri":
         sagpayload = msg.payload.decode()
         if sagpayload == "1":
@@ -166,70 +155,52 @@ def on_message(client, userdata, msg):
 def map_range(x, in_min, in_max, out_min, out_max):
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 
+
 def flame_sensor_and_samandira_loop():
     while True:
         try:
-
-            front_sensor = AnalogIn(ads, ADS.P0)  # On
-            right_sensor = AnalogIn(ads, ADS.P1)  # Sag
-            left_sensor = AnalogIn(ads, ADS.P2)   # Sol
-            back_sensor = AnalogIn(ads, ADS.P3)   # Arka
-            samandira_sensor=AnalogIn(ads2,ADS.P0)
-            samandiraraw=samandira_sensor.value
-            su_seviyesi = map_range(samandiraraw, 0, 5500, 0, 100)
-            if su_seviyesi>100:
-                su_seviyesi=100
-            elif su_seviyesi<0:
-                su_seviyesi=0
-            print("Su seviyesi",int(su_seviyesi))
-            client.publish("su/veri",int(su_seviyesi))
+            front_sensor = AnalogIn(ads, ADS.P0)
+            right_sensor = AnalogIn(ads, ADS.P1)
+            left_sensor = AnalogIn(ads, ADS.P2)
+            back_sensor = AnalogIn(ads, ADS.P3)
+            samandira_sensor = AnalogIn(ads2, ADS.P0)
+            samandiraraw = samandira_sensor.value
+            su_seviyesi = max(0, min(100, (samandiraraw / 5500) * 100))
+            ##print("Su seviyesi:", int(su_seviyesi))
+            client.publish("su/veri", int(su_seviyesi))
 
             values = [front_sensor.value, right_sensor.value, left_sensor.value, back_sensor.value]
 
-            if((front_sensor.value<back_sensor.value) and (front_sensor.value<right_sensor.value) and (front_sensor.value<left_sensor.value)):
-                print("a")
+            if front_sensor.value < min(back_sensor.value, right_sensor.value, left_sensor.value):
                 payload = "^"
-            elif((right_sensor.value<back_sensor.value) and (right_sensor.value<left_sensor.value) and (right_sensor.value<front_sensor.value)):
-                print("b")
+            elif right_sensor.value < min(back_sensor.value, left_sensor.value, front_sensor.value):
                 payload = ">"
-            elif((back_sensor.value<front_sensor.value) and (back_sensor.value<left_sensor.value) and (back_sensor.value<right_sensor.value)):
-                print("c")
+            elif back_sensor.value < min(front_sensor.value, left_sensor.value, right_sensor.value):
                 payload = "V"
-            elif((left_sensor.value<front_sensor.value) and (left_sensor.value<back_sensor.value) and (left_sensor.value<right_sensor.value)):
-                print("d")
+            elif left_sensor.value < min(front_sensor.value, back_sensor.value, right_sensor.value):
                 payload = "<"
             else:
-                print("ff")
                 payload = "-"
             client.publish("flame/veri", payload)
 
-        except:
-            print("Sensor hatası")
+        except Exception as e:
+            print("Sensör okuma hatası:", e)
         time.sleep(1)
 
-
-
-
-# MQTT Client
+# --- MQTT client ---
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_message = on_message
 client.connect(MQTT_BROKER, 1883, 60)
-client.loop_start()
 
-
-#flame
-
-flame_thread = threading.Thread(target=flame_sensor_and_samandira_loop)
-flame_thread.daemon = True
-flame_thread.start()
-
-
-
+# --- Flask uygulaması ---
 app = Flask(__name__)
+
+# Kamera başlatma
 camera = Picamera2()
 camera.configure(camera.create_preview_configuration(main={"format": 'XRGB8888', "size": (640, 480)}))
 camera.start()
+
 HTML_PAGE = """
 <!doctype html>
 <html>
@@ -263,9 +234,15 @@ def generate_frames():
 @app.route('/video_feed')
 def video_feed():
     return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
 if __name__ == '__main__':
+    # MQTT döngüsünü başlat
+    client.loop_start()
+
+    # Sensör izleme threadini başlat
+    flame_thread = threading.Thread(target=flame_sensor_and_samandira_loop)
+    flame_thread.daemon = True
+    flame_thread.start()
 
     # Flask uygulamasını başlat
     app.run(host='0.0.0.0', port=5000, debug=False)
-while True:
-    time.sleep(1)
